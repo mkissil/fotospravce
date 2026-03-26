@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useSession, signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import Providers from '@/components/Providers';
@@ -10,9 +10,7 @@ import {
   BarChart3,
   Briefcase,
   Calendar,
-  FileSignature,
   FileText,
-  Image,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -28,8 +26,6 @@ const nav = [
   { href: '/dashboard/zakazky', label: 'Zakázky', icon: Briefcase },
   { href: '/dashboard/kalendar', label: 'Kalendář', icon: Calendar },
   { href: '/dashboard/faktury', label: 'Faktury', icon: FileText },
-  { href: '/dashboard/smlouvy', label: 'Smlouvy', icon: FileSignature },
-  { href: '/dashboard/galerie', label: 'Galerie', icon: Image },
   { href: '/dashboard/statistiky', label: 'Statistiky', icon: BarChart3 },
 ];
 
@@ -49,7 +45,9 @@ function DashboardNavContent({ email, initial, onNav, pathname }: DashboardNavCo
             F
           </div>
           <div>
-            <p className="font-serif text-xl font-semibold text-white">Foto<span className="text-[var(--accent)]">Správce</span></p>
+            <p className="font-serif text-xl font-semibold text-white">
+              Foto<span className="text-[var(--accent)]">Správce</span>
+            </p>
             <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/45">Studio OS</p>
           </div>
         </Link>
@@ -58,18 +56,27 @@ function DashboardNavContent({ email, initial, onNav, pathname }: DashboardNavCo
       <div className="dashboard-divider mx-5" />
 
       <nav className="flex-1 space-y-1 px-3 py-5">
-        {nav.map((item) => {
+        {nav.map(item => {
           const active = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
+
           return (
             <Link
               key={item.href}
               href={item.href}
               onClick={onNav}
               className={`group flex items-center gap-3 rounded-[22px] px-4 py-3 text-sm font-medium transition-all ${
-                active ? 'bg-white/12 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_18px_32px_-24px_rgba(0,0,0,0.7)]' : 'text-white/66 hover:bg-white/8 hover:text-white'
+                active
+                  ? 'bg-white/12 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_18px_32px_-24px_rgba(0,0,0,0.7)]'
+                  : 'text-white/66 hover:bg-white/8 hover:text-white'
               }`}
             >
-              <span className={`flex h-10 w-10 items-center justify-center rounded-2xl ${active ? 'bg-white/12 text-white' : 'bg-transparent text-white/66 group-hover:bg-white/8 group-hover:text-white'}`}>
+              <span
+                className={`flex h-10 w-10 items-center justify-center rounded-2xl ${
+                  active
+                    ? 'bg-white/12 text-white'
+                    : 'bg-transparent text-white/66 group-hover:bg-white/8 group-hover:text-white'
+                }`}
+              >
                 <item.icon size={18} strokeWidth={active ? 2.2 : 1.85} />
               </span>
               {item.label}
@@ -79,7 +86,15 @@ function DashboardNavContent({ email, initial, onNav, pathname }: DashboardNavCo
       </nav>
 
       <div className="mt-auto space-y-3 p-3">
-        <Link href="/dashboard/nastaveni" onClick={onNav} className={`flex items-center gap-3 rounded-[22px] px-4 py-3 text-sm font-medium transition-all ${pathname.startsWith('/dashboard/nastaveni') ? 'bg-white/12 text-white' : 'text-white/66 hover:bg-white/8 hover:text-white'}`}>
+        <Link
+          href="/dashboard/nastaveni"
+          onClick={onNav}
+          className={`flex items-center gap-3 rounded-[22px] px-4 py-3 text-sm font-medium transition-all ${
+            pathname.startsWith('/dashboard/nastaveni')
+              ? 'bg-white/12 text-white'
+              : 'text-white/66 hover:bg-white/8 hover:text-white'
+          }`}
+        >
           <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/8">
             <Settings size={18} />
           </span>
@@ -96,7 +111,10 @@ function DashboardNavContent({ email, initial, onNav, pathname }: DashboardNavCo
               <p className="truncate text-xs text-white/50">{email}</p>
             </div>
           </div>
-          <button onClick={() => signOut({ callbackUrl: '/' })} className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/8 px-4 py-3 text-sm font-medium text-white/72 hover:bg-white/12 hover:text-white">
+          <button
+            onClick={() => signOut({ callbackUrl: '/' })}
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/8 px-4 py-3 text-sm font-medium text-white/72 hover:bg-white/12 hover:text-white"
+          >
             <LogOut size={16} />
             Odhlásit se
           </button>
@@ -111,7 +129,8 @@ function Shell({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
   const initial = session?.user?.name?.[0]?.toUpperCase() || 'F';
-  const activeItem = nav.find((item) => pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))) ?? nav[0];
+  const activeItem =
+    nav.find(item => pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))) ?? nav[0];
 
   return (
     <div className="min-h-screen">
@@ -127,7 +146,9 @@ function Shell({ children }: { children: React.ReactNode }) {
             <Menu size={22} />
           </button>
           <div className="text-center">
-            <p className="font-serif text-lg font-semibold text-[var(--text)]">Foto<span className="text-[var(--accent)]">Správce</span></p>
+            <p className="font-serif text-lg font-semibold text-[var(--text)]">
+              Foto<span className="text-[var(--accent)]">Správce</span>
+            </p>
             <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)]">{activeItem.label}</p>
           </div>
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,var(--accent),#ff956d)] text-sm font-bold text-white">
@@ -139,13 +160,30 @@ function Shell({ children }: { children: React.ReactNode }) {
       <AnimatePresence>
         {mobileOpen && (
           <>
-            <motion.div className="fixed inset-0 z-50 bg-[rgba(12,10,9,0.42)] backdrop-blur-sm lg:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setMobileOpen(false)} />
-            <motion.aside className="fixed inset-y-3 left-3 z-50 w-[286px] rounded-[32px] lg:hidden" initial={{ x: -320 }} animate={{ x: 0 }} exit={{ x: -320 }} transition={{ type: 'tween', duration: 0.25 }}>
+            <motion.div
+              className="fixed inset-0 z-50 bg-[rgba(12,10,9,0.42)] backdrop-blur-sm lg:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileOpen(false)}
+            />
+            <motion.aside
+              className="fixed inset-y-3 left-3 z-50 w-[286px] rounded-[32px] lg:hidden"
+              initial={{ x: -320 }}
+              animate={{ x: 0 }}
+              exit={{ x: -320 }}
+              transition={{ type: 'tween', duration: 0.25 }}
+            >
               <div className="surface-panel-dark relative h-full rounded-[32px]">
                 <button onClick={() => setMobileOpen(false)} className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 text-white">
                   <X size={18} />
                 </button>
-                <DashboardNavContent email={session?.user?.email} initial={initial} onNav={() => setMobileOpen(false)} pathname={pathname} />
+                <DashboardNavContent
+                  email={session?.user?.email}
+                  initial={initial}
+                  onNav={() => setMobileOpen(false)}
+                  pathname={pathname}
+                />
               </div>
             </motion.aside>
           </>
@@ -165,7 +203,7 @@ function Shell({ children }: { children: React.ReactNode }) {
               <div className="flex flex-wrap items-center gap-3">
                 <div className="hidden items-center gap-2 rounded-full bg-[var(--accent-bg)] px-4 py-2 text-xs font-semibold text-[var(--accent)] sm:inline-flex">
                   <Sparkles size={14} />
-                  klient · zakázka · faktura · galerie
+                  klient · zakázka · faktura · přehled
                 </div>
                 <div className="rounded-full border border-white/70 bg-white/68 px-3 py-2 text-xs text-[var(--text-secondary)] sm:px-4 sm:text-sm">
                   {session?.user?.email || 'studio@foto.cz'}

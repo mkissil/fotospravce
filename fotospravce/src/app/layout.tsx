@@ -7,13 +7,13 @@ const fraunces = Fraunces({ subsets: ['latin', 'latin-ext'], variable: '--font-s
 const jetbrains = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap' });
 
 export const metadata: Metadata = {
-  title: 'FotoSprávce | Studio OS pro české fotografy',
+  title: 'FotoSprávce | CRM pro české fotografy',
   description:
-    'Klienti, zakázky, smlouvy, faktury a galerie v jednom rytmu. Český workspace pro fotografy a studia, která chtějí působit profesionálně.',
-  keywords: ['crm pro fotografy', 'software pro fotografy', 'studio os', 'správa zakázek fotograf'],
+    'Klienti, zakázky, kalendář, faktury a přehled v jednom rytmu. Český workspace pro fotografy a malá studia, která chtějí působit profesionálně.',
+  keywords: ['crm pro fotografy', 'software pro fotografy', 'správa zakázek fotograf', 'faktury pro fotografy'],
   openGraph: {
-    title: 'FotoSprávce | Studio OS pro české fotografy',
-    description: 'Od první poptávky po galerii odevzdanou klientovi. Všechno v jednom systému.',
+    title: 'FotoSprávce | CRM pro české fotografy',
+    description: 'Od prvního kontaktu po zaplacenou fakturu. Přehledné workflow pro fotografy v jednom systému.',
     type: 'website',
   },
 };

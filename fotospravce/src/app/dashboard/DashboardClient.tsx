@@ -2,31 +2,106 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import type { LucideIcon } from 'lucide-react';
 import { AlertCircle, ArrowRight, Camera, CreditCard, FileText, Sparkles, TrendingUp, Users } from 'lucide-react';
 import { stagger, staggerItem } from '@/lib/animations';
-import { JOB_STATUSES, formatDate, formatMoney } from '@/lib/utils';
+import { formatDate, formatMoney, JOB_STATUSES } from '@/lib/utils';
 
 interface Props {
   userName: string;
   greeting: string;
   today: string;
-  stats: { monthJobsCount: number; monthRevenue: number; unpaidCount: number; unpaidTotal: number; clientCount: number };
-  upcomingJobs: { id: string; title: string; clientName: string; type: string; shootDate: string | null; status: string; location: string | null }[];
-  recentJobs: { id: string; title: string; clientName: string; status: string; createdAt: string }[];
+  stats: {
+    monthJobsCount: number;
+    monthRevenue: number;
+    unpaidCount: number;
+    unpaidTotal: number;
+    clientCount: number;
+  };
+  upcomingJobs: {
+    id: string;
+    title: string;
+    clientName: string;
+    type: string;
+    shootDate: string | null;
+    status: string;
+    location: string | null;
+  }[];
+  recentJobs: {
+    id: string;
+    title: string;
+    clientName: string;
+    status: string;
+    createdAt: string;
+  }[];
 }
 
-const statCards = [
-  { key: 'monthJobsCount', label: 'Zakázky tento měsíc', helper: 'co právě hýbe studiem', icon: Camera, tone: 'bg-[var(--accent-bg)] text-[var(--accent)]' },
-  { key: 'monthRevenue', label: 'Příjem tohoto měsíce', helper: 'rychlý finanční pulz', icon: TrendingUp, tone: 'bg-[var(--success-light)] text-[var(--success)]', isMoney: true },
-  { key: 'unpaidCount', label: 'Neuhrazené faktury', helper: 'co potřebuje pozornost', icon: AlertCircle, tone: 'bg-[var(--danger-light)] text-[var(--danger)]', danger: true },
-  { key: 'clientCount', label: 'Klienti v databázi', helper: 'kontakty, které máš po ruce', icon: Users, tone: 'bg-[var(--purple-light)] text-[var(--purple)]' },
-];
+type StatCard = {
+  key: keyof Props['stats'];
+  label: string;
+  helper: string;
+  icon: LucideIcon;
+  tone: string;
+  isMoney?: boolean;
+  danger?: boolean;
+};
+
+const statCards: StatCard[] = [
+  {
+    key: 'monthJobsCount',
+    label: 'Zakázky tento měsíc',
+    helper: 'co právě hýbe studiem',
+    icon: Camera,
+    tone: 'bg-[var(--accent-bg)] text-[var(--accent)]',
+  },
+  {
+    key: 'monthRevenue',
+    label: 'Příjem tohoto měsíce',
+    helper: 'rychlý finanční puls',
+    icon: TrendingUp,
+    tone: 'bg-[var(--success-light)] text-[var(--success)]',
+    isMoney: true,
+  },
+  {
+    key: 'unpaidCount',
+    label: 'Neuhrazené faktury',
+    helper: 'co potřebuje pozornost',
+    icon: AlertCircle,
+    tone: 'bg-[var(--danger-light)] text-[var(--danger)]',
+    danger: true,
+  },
+  {
+    key: 'clientCount',
+    label: 'Klienti v databázi',
+    helper: 'kontakty, které máš po ruce',
+    icon: Users,
+    tone: 'bg-[var(--purple-light)] text-[var(--purple)]',
+  },
+] as const;
 
 export default function DashboardClient({ userName, greeting, today, stats, upcomingJobs, recentJobs }: Props) {
   const heroSignals = [
-    { label: 'Zakázky v pohybu', value: `${stats.monthJobsCount}`, icon: Camera, tone: 'bg-[var(--accent-bg)] text-[var(--accent)]' },
-    { label: 'Čeká na úhradu', value: stats.unpaidCount > 0 ? formatMoney(stats.unpaidTotal) : '0 Kč', icon: CreditCard, tone: stats.unpaidCount > 0 ? 'bg-[var(--danger-light)] text-[var(--danger)]' : 'bg-[var(--success-light)] text-[var(--success)]' },
-    { label: 'Aktivní kontakty', value: `${stats.clientCount}`, icon: Users, tone: 'bg-[var(--purple-light)] text-[var(--purple)]' },
+    {
+      label: 'Zakázky v pohybu',
+      value: `${stats.monthJobsCount}`,
+      icon: Camera,
+      tone: 'bg-[var(--accent-bg)] text-[var(--accent)]',
+    },
+    {
+      label: 'Čeká na úhradu',
+      value: stats.unpaidCount > 0 ? formatMoney(stats.unpaidTotal) : '0 Kč',
+      icon: CreditCard,
+      tone:
+        stats.unpaidCount > 0
+          ? 'bg-[var(--danger-light)] text-[var(--danger)]'
+          : 'bg-[var(--success-light)] text-[var(--success)]',
+    },
+    {
+      label: 'Aktivní kontakty',
+      value: `${stats.clientCount}`,
+      icon: Users,
+      tone: 'bg-[var(--purple-light)] text-[var(--purple)]',
+    },
   ];
 
   return (
@@ -55,7 +130,7 @@ export default function DashboardClient({ userName, greeting, today, stats, upco
               </Link>
             </div>
             <div className="mt-8 grid gap-3 sm:grid-cols-3">
-              {heroSignals.map((item) => (
+              {heroSignals.map(item => (
                 <div key={item.label} className="rounded-[24px] border border-white/70 bg-white/58 p-4">
                   <div className={`flex h-11 w-11 items-center justify-center rounded-2xl ${item.tone}`}>
                     <item.icon size={18} />
@@ -95,7 +170,7 @@ export default function DashboardClient({ userName, greeting, today, stats, upco
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-[var(--text)]">Fotografický workflow</p>
-                    <p className="text-sm text-[var(--text-secondary)]">klient → zakázka → faktura → galerie</p>
+                    <p className="text-sm text-[var(--text-secondary)]">klient → zakázka → faktura → přehled</p>
                   </div>
                 </div>
               </div>
@@ -105,8 +180,9 @@ export default function DashboardClient({ userName, greeting, today, stats, upco
       </motion.section>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {statCards.map((card) => {
+        {statCards.map(card => {
           const value = stats[card.key as keyof typeof stats];
+
           return (
             <motion.div key={card.key} variants={staggerItem} className="surface-panel rounded-[24px] p-4 sm:rounded-[30px] sm:p-5">
               <div className="flex items-start justify-between gap-3">
@@ -133,28 +209,37 @@ export default function DashboardClient({ userName, greeting, today, stats, upco
               <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">Nadcházející focení</p>
               <h3 className="mt-1 text-lg font-semibold tracking-[-0.02em] text-[var(--text)]">Co tě čeká nejdřív</h3>
             </div>
-            <Link href="/dashboard/kalendar" className="text-sm font-semibold text-[var(--accent)] hover:text-[var(--accent-hover)]">Kalendář</Link>
+            <Link href="/dashboard/kalendar" className="text-sm font-semibold text-[var(--accent)] hover:text-[var(--accent-hover)]">
+              Kalendář
+            </Link>
           </div>
           <div className="divide-y divide-white/55">
             {upcomingJobs.length === 0 ? (
               <p className="px-6 py-12 text-center text-sm text-[var(--text-muted)]">Zatím nemáš žádné naplánované focení.</p>
             ) : (
-              upcomingJobs.map((job) => (
-                <Link key={job.id} href={`/dashboard/zakazky/${job.id}`} className="flex flex-col gap-4 px-5 py-4 transition-colors hover:bg-white/50 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-[22px] bg-[var(--accent-bg)] text-center">
-                      <span className="text-xs font-semibold text-[var(--text)]">{job.shootDate ? formatDate(job.shootDate).slice(0, 6) : 'TBD'}</span>
+              upcomingJobs.map(job => {
+                const statusInfo = JOB_STATUSES[job.status as keyof typeof JOB_STATUSES];
+
+                return (
+                  <Link key={job.id} href={`/dashboard/zakazky/${job.id}`} className="flex flex-col gap-4 px-5 py-4 transition-colors hover:bg-white/50 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-16 w-16 items-center justify-center rounded-[22px] bg-[var(--accent-bg)] text-center">
+                        <span className="text-xs font-semibold text-[var(--text)]">{job.shootDate ? formatDate(job.shootDate).slice(0, 6) : 'TBD'}</span>
+                      </div>
+                      <div>
+                        <p className="text-base font-semibold tracking-[-0.02em] text-[var(--text)]">{job.title}</p>
+                        <p className="mt-1 text-sm text-[var(--text-secondary)]">
+                          {job.clientName}
+                          {job.location ? ` · ${job.location}` : ''}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-base font-semibold tracking-[-0.02em] text-[var(--text)]">{job.title}</p>
-                      <p className="mt-1 text-sm text-[var(--text-secondary)]">{job.clientName}{job.location ? ` · ${job.location}` : ''}</p>
-                    </div>
-                  </div>
-                  <span className={`inline-flex rounded-full px-3 py-1 text-[11px] font-semibold text-white ${(JOB_STATUSES as Record<string, { color: string; label: string }>)[job.status]?.color || 'bg-gray-400'}`}>
-                    {(JOB_STATUSES as Record<string, { color: string; label: string }>)[job.status]?.label || job.status}
-                  </span>
-                </Link>
-              ))
+                    <span className={`inline-flex rounded-full px-3 py-1 text-[11px] font-semibold text-white ${statusInfo?.color || 'bg-gray-400'}`}>
+                      {statusInfo?.label || job.status}
+                    </span>
+                  </Link>
+                );
+              })
             )}
           </div>
         </motion.section>
@@ -165,33 +250,39 @@ export default function DashboardClient({ userName, greeting, today, stats, upco
               <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">Poslední pohyb</p>
               <h3 className="mt-1 text-lg font-semibold tracking-[-0.02em] text-[var(--text)]">Naposledy upravené zakázky</h3>
             </div>
-            <Link href="/dashboard/zakazky" className="text-sm font-semibold text-[var(--accent)] hover:text-[var(--accent-hover)]">Všechny</Link>
+            <Link href="/dashboard/zakazky" className="text-sm font-semibold text-[var(--accent)] hover:text-[var(--accent-hover)]">
+              Všechny
+            </Link>
           </div>
           <div className="divide-y divide-white/55">
             {recentJobs.length === 0 ? (
               <p className="px-6 py-12 text-center text-sm text-[var(--text-muted)]">Zatím tu není žádná aktivita.</p>
             ) : (
-              recentJobs.map((job) => (
-                <Link key={job.id} href={`/dashboard/zakazky/${job.id}`} className="flex items-start gap-4 px-5 py-4 transition-colors hover:bg-white/50 sm:px-6">
-                  <div className="mt-1 flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--purple-light)] text-[var(--purple)]">
-                    <Sparkles size={16} />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                      <div>
-                        <p className="text-base font-semibold tracking-[-0.02em] text-[var(--text)]">{job.title}</p>
-                        <p className="mt-1 text-sm text-[var(--text-secondary)]">{job.clientName}</p>
-                      </div>
-                      <div className="text-left sm:text-right">
-                        <span className={`inline-flex rounded-full px-3 py-1 text-[11px] font-semibold text-white ${(JOB_STATUSES as Record<string, { color: string; label: string }>)[job.status]?.color || 'bg-gray-400'}`}>
-                          {(JOB_STATUSES as Record<string, { color: string; label: string }>)[job.status]?.label || job.status}
-                        </span>
-                        <p className="mt-2 text-xs text-[var(--text-muted)]">{formatDate(job.createdAt)}</p>
+              recentJobs.map(job => {
+                const statusInfo = JOB_STATUSES[job.status as keyof typeof JOB_STATUSES];
+
+                return (
+                  <Link key={job.id} href={`/dashboard/zakazky/${job.id}`} className="flex items-start gap-4 px-5 py-4 transition-colors hover:bg-white/50 sm:px-6">
+                    <div className="mt-1 flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--purple-light)] text-[var(--purple)]">
+                      <Sparkles size={16} />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                          <p className="text-base font-semibold tracking-[-0.02em] text-[var(--text)]">{job.title}</p>
+                          <p className="mt-1 text-sm text-[var(--text-secondary)]">{job.clientName}</p>
+                        </div>
+                        <div className="text-left sm:text-right">
+                          <span className={`inline-flex rounded-full px-3 py-1 text-[11px] font-semibold text-white ${statusInfo?.color || 'bg-gray-400'}`}>
+                            {statusInfo?.label || job.status}
+                          </span>
+                          <p className="mt-2 text-xs text-[var(--text-muted)]">{formatDate(job.createdAt)}</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Link>
-              ))
+                  </Link>
+                );
+              })
             )}
           </div>
         </motion.section>
