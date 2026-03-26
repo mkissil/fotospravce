@@ -1,11 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import { motion } from 'framer-motion';
-import { Camera, Eye, EyeOff } from 'lucide-react';
+import { ArrowRight, Camera, Check, Eye, EyeOff, FileText, Image as ImageIcon, PenTool } from 'lucide-react';
+import { stagger, staggerItem } from '@/lib/animations';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -17,67 +18,153 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!agreed) { setError('Musíte souhlasit s podmínkami'); return; }
-    setLoading(true); setError('');
-    const res = await fetch('/api/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
+
+    if (!agreed) {
+      setError('Musíte souhlasit s podmínkami');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    const res = await fetch('/api/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form),
+    });
+
     const data = await res.json();
-    if (!res.ok) { setError(data.error || 'Registrace selhala'); setLoading(false); return; }
+
+    if (!res.ok) {
+      setError(data.error || 'Registrace selhala');
+      setLoading(false);
+      return;
+    }
+
     await signIn('credentials', { email: form.email, password: form.password, redirect: false });
     router.push('/dashboard');
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--bg)] px-4">
-      <motion.div className="w-full max-w-md" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
-        <div className="rounded-2xl border border-[var(--border)] bg-white p-8 shadow-sm">
-          <div className="mb-8 text-center">
-            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--accent-light)]">
-              <Camera className="text-[var(--accent)]" size={22} />
+    <div className="min-h-screen overflow-hidden px-4 py-8 sm:px-6">
+      <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl items-center gap-8 lg:grid-cols-[1.02fr_0.98fr]">
+        <motion.div initial="initial" animate="animate" variants={stagger} className="hidden lg:block">
+          <motion.div variants={staggerItem} className="section-kicker">
+            <span className="eyebrow-line" />
+            Nové studio
+          </motion.div>
+          <motion.h1 variants={staggerItem} className="mt-7 max-w-2xl font-serif text-6xl font-semibold leading-[0.95] tracking-[-0.04em] text-[var(--text)]">
+            Založ si workspace, který je jasný i bez vysvětlování.
+          </motion.h1>
+          <motion.p variants={staggerItem} className="mt-6 max-w-xl text-lg leading-8 text-[var(--text-secondary)]">
+            Hned po vstupu je čitelné, že patříš do prostoru pro fotografy: zakázky, smlouvy, faktury a galerie mají každý vlastní výraz.
+          </motion.p>
+          <motion.div variants={staggerItem} className="mt-10 grid max-w-2xl gap-4 sm:grid-cols-3">
+            {[
+              { icon: PenTool, label: 'smlouvy', hint: 'podpis za pár kliků' },
+              { icon: FileText, label: 'faktury', hint: 'české náležitosti' },
+              { icon: ImageIcon, label: 'galerie', hint: 'výběr pro klienta' },
+            ].map((item) => (
+              <div key={item.label} className="surface-panel rounded-[30px] p-5">
+                <div className="flex h-12 w-12 items-center justify-center rounded-[20px] bg-[var(--accent-bg)] text-[var(--accent)]">
+                  <item.icon size={20} />
+                </div>
+                <p className="mt-5 text-base font-semibold text-[var(--text)]">{item.label}</p>
+                <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{item.hint}</p>
+              </div>
+            ))}
+          </motion.div>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }} className="surface-panel-strong mx-auto w-full max-w-xl rounded-[28px] p-6 sm:rounded-[34px] sm:p-9">
+          <Link href="/" className="inline-flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,var(--accent),#ff9c74)] text-base font-bold text-white shadow-[0_18px_40px_-24px_rgba(214,93,56,0.95)]">
+              F
             </div>
-            <h1 className="text-2xl font-bold font-serif">Vytvořte si účet zdarma</h1>
-            <p className="mt-1 text-sm text-[var(--text-secondary)]">14 dní plný přístup. Bez kreditní karty.</p>
+            <div>
+              <p className="font-serif text-xl font-semibold">Foto<span className="text-[var(--accent)]">Správce</span></p>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">Studio OS pro fotografy</p>
+            </div>
+          </Link>
+
+          <div className="mt-8">
+            <div className="flex h-14 w-14 items-center justify-center rounded-[22px] bg-[var(--accent-bg)] text-[var(--accent)]">
+              <Camera size={24} />
+            </div>
+            <h1 className="mt-6 font-serif text-3xl font-semibold tracking-[-0.04em] text-[var(--text)] sm:text-4xl">Vytvořit účet zdarma</h1>
+            <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)] sm:text-base sm:leading-7">
+              14 dní plného přístupu. Bez kreditní karty. Bez technického balastu navíc.
+            </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {error && <div className="rounded-xl bg-[var(--danger-light)] border border-[var(--danger)]/20 p-3 text-sm text-[var(--danger)]">{error}</div>}
+          <div className="mt-6 rounded-[20px] border border-white/70 bg-white/60 p-4 sm:rounded-[24px]">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--success-light)] text-[var(--success)]">
+                <Check size={18} />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-[var(--text)]">Připraveno za pár minut</p>
+                <p className="text-sm text-[var(--text-secondary)]">Zaregistruješ se a můžeš rovnou začít s klienty a zakázkami.</p>
+              </div>
+            </div>
+          </div>
+
+          <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+            {error && <div className="rounded-[22px] border border-[var(--danger)]/18 bg-[var(--danger-light)] px-4 py-3 text-sm text-[var(--danger)]">{error}</div>}
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-[var(--text)]">Jméno</label>
-              <input type="text" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
-                className="w-full rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm outline-none focus:ring-2 ring-[var(--accent)]/20 focus:border-[var(--accent)] placeholder:text-[var(--text-muted)] transition-all"
-                placeholder="Jan Novák" />
+              <label className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">Jméno</label>
+              <input
+                type="text"
+                required
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                className="w-full rounded-2xl border border-white/70 bg-white/72 px-4 py-3.5 text-sm outline-none transition-all placeholder:text-[var(--text-muted)] focus:border-[var(--accent)] focus:bg-white focus:ring-4 focus:ring-[rgba(214,93,56,0.12)]"
+                placeholder="Jan Novák"
+              />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-[var(--text)]">Email</label>
-              <input type="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
-                className="w-full rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm outline-none focus:ring-2 ring-[var(--accent)]/20 focus:border-[var(--accent)] placeholder:text-[var(--text-muted)] transition-all"
-                placeholder="vas@email.cz" />
+              <label className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">E-mail</label>
+              <input
+                type="email"
+                required
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                className="w-full rounded-2xl border border-white/70 bg-white/72 px-4 py-3.5 text-sm outline-none transition-all placeholder:text-[var(--text-muted)] focus:border-[var(--accent)] focus:bg-white focus:ring-4 focus:ring-[rgba(214,93,56,0.12)]"
+                placeholder="vas@email.cz"
+              />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-[var(--text)]">Heslo</label>
+              <label className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--text-muted)]">Heslo</label>
               <div className="relative">
-                <input type={showPw ? 'text' : 'password'} required minLength={6} value={form.password} onChange={e => setForm({ ...form, password: e.target.value })}
-                  className="w-full rounded-xl border border-[var(--border)] bg-white px-4 py-3 pr-10 text-sm outline-none focus:ring-2 ring-[var(--accent)]/20 focus:border-[var(--accent)] placeholder:text-[var(--text-muted)] transition-all"
-                  placeholder="Min. 6 znaků" />
-                <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-secondary)]">
-                  {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
+                <input
+                  type={showPw ? 'text' : 'password'}
+                  required
+                  minLength={6}
+                  value={form.password}
+                  onChange={(e) => setForm({ ...form, password: e.target.value })}
+                  className="w-full rounded-2xl border border-white/70 bg-white/72 px-4 py-3.5 pr-12 text-sm outline-none transition-all placeholder:text-[var(--text-muted)] focus:border-[var(--accent)] focus:bg-white focus:ring-4 focus:ring-[rgba(214,93,56,0.12)]"
+                  placeholder="Minimálně 6 znaků"
+                />
+                <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-2 text-[var(--text-muted)] hover:bg-white hover:text-[var(--text)]">
+                  {showPw ? <EyeOff size={17} /> : <Eye size={17} />}
                 </button>
               </div>
             </div>
-            <label className="flex items-center gap-2.5 text-sm text-[var(--text-secondary)] cursor-pointer">
-              <input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)} className="rounded border-[var(--border)] text-[var(--accent)] focus:ring-[var(--accent)]" />
+            <label className="flex cursor-pointer items-center gap-3 rounded-[22px] border border-white/65 bg-white/58 px-4 py-3 text-sm text-[var(--text-secondary)]">
+              <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="h-4 w-4 rounded border-[var(--border)] text-[var(--accent)] focus:ring-[var(--accent)]" />
               Souhlasím s podmínkami služby
             </label>
-            <button type="submit" disabled={loading}
-              className="w-full rounded-xl bg-[var(--accent)] py-3 text-sm font-medium text-white transition-all hover:bg-[var(--accent-hover)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 shadow-sm">
-              {loading ? 'Vytvářím účet...' : 'Vytvořit účet'}
+            <button type="submit" disabled={loading} className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(135deg,var(--accent),#ff946b)] px-5 py-3.5 text-sm font-semibold text-white shadow-[0_22px_50px_-28px_rgba(214,93,56,0.95)] hover:-translate-y-0.5 disabled:opacity-60">
+              {loading ? 'Vytvářím účet…' : 'Vytvořit účet'}
+              {!loading && <ArrowRight size={16} />}
             </button>
           </form>
 
           <p className="mt-6 text-center text-sm text-[var(--text-secondary)]">
-            Již máte účet? <Link href="/login" className="font-semibold text-[var(--accent)] hover:underline">Přihlaste se</Link>
+            Už účet máš? <Link href="/login" className="font-semibold text-[var(--accent)] hover:text-[var(--accent-hover)]">Přihlásit se</Link>
           </p>
-        </div>
-      </motion.div>
+        </motion.div>
+      </div>
     </div>
   );
 }

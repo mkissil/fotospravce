@@ -1,6 +1,6 @@
 'use client';
 import { motion } from 'framer-motion';
-import { stagger, staggerItem, fadeIn } from '@/lib/animations';
+import { stagger, staggerItem } from '@/lib/animations';
 import { PenTool, FileText } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 

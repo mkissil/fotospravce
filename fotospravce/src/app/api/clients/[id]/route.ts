@@ -1,19 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { handleApiError } from '@/lib/api';
 import { prisma } from '@/lib/db';
 import { requireUser } from '@/lib/session';
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
-  const user = await requireUser();
-  const data = await req.json();
-  const client = await prisma.client.update({
-    where: { id: params.id, userId: user.id },
-    data,
-  });
-  return NextResponse.json(client);
+  try {
+    const user = await requireUser();
+    const data = await req.json();
+    const client = await prisma.client.update({
+      where: { id: params.id, userId: user.id },
+      data,
+    });
+    return NextResponse.json(client);
+  } catch (error) {
+    return handleApiError(error);
+  }
 }
 
 export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
-  const user = await requireUser();
-  await prisma.client.delete({ where: { id: params.id, userId: user.id } });
-  return NextResponse.json({ ok: true });
+  try {
+    const user = await requireUser();
+    await prisma.client.delete({ where: { id: params.id, userId: user.id } });
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    return handleApiError(error);
+  }
 }

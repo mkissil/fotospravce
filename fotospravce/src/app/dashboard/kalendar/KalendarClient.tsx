@@ -1,5 +1,5 @@
 'use client';
-import { stagger, staggerItem, fadeIn } from '@/lib/animations';
+import { stagger } from '@/lib/animations';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';

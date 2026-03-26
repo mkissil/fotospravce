@@ -10,12 +10,12 @@ const colors = {
   danger: 'bg-[var(--danger-light)] text-[var(--danger)]',
   accent: 'bg-[var(--accent-light)] text-[var(--accent)]',
   purple: 'bg-[var(--purple-light)] text-[var(--purple)]',
-  default: 'bg-[var(--bg-hover)] text-[var(--text-secondary)]',
+  default: 'bg-white/70 text-[var(--text-secondary)]',
 };
 
 export default function Badge({ children, variant = 'default', className = '' }: BadgeProps) {
   return (
-    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${colors[variant]} ${className}`}>
+    <span className={`inline-flex items-center rounded-full border border-white/40 px-2.5 py-1 text-[11px] font-semibold tracking-[0.08em] ${colors[variant]} ${className}`}>
       {children}
     </span>
   );

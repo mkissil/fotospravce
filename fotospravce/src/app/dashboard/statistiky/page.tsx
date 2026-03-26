@@ -16,7 +16,7 @@ export default async function StatistikyPage() {
   const avgJobPrice = jobs.filter(j => j.price).length > 0
     ? jobs.filter(j => j.price).reduce((s, j) => s + (j.price || 0), 0) / jobs.filter(j => j.price).length
     : 0;
-  const poptavky = jobs.filter(j => true).length;
+  const poptavky = jobs.length;
   const potvrzeno = jobs.filter(j => !['poptavka', 'nabidka'].includes(j.status)).length;
   const conversionRate = poptavky > 0 ? Math.round((potvrzeno / poptavky) * 100) : 0;
 

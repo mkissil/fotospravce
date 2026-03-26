@@ -1,4 +1,5 @@
 import { getServerSession } from 'next-auth';
+import { UnauthorizedError } from './api';
 import { authOptions } from './auth';
 import { prisma } from './db';
 
@@ -10,6 +11,6 @@ export async function getCurrentUser() {
 
 export async function requireUser() {
   const user = await getCurrentUser();
-  if (!user) throw new Error('Unauthorized');
+  if (!user) throw new UnauthorizedError();
   return user;
 }

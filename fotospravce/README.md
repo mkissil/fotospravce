@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FotoSpravce
 
-## Getting Started
+CRM a prezentační web pro fotografy postavený na `Next.js 14`, `Prisma`, `NextAuth` a `Framer Motion`.
 
-First, run the development server:
+## Lokální spuštění
+
+1. Nastavte `.env.local` s platným `DATABASE_URL`, `NEXTAUTH_SECRET` a dalšími klíči, které projekt používá.
+2. Vygenerujte Prisma client:
+
+```bash
+node_modules/.bin/prisma.cmd generate
+```
+
+3. Spusťte development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Kontrola kvality
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run lint
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Databáze
 
-## Learn More
+Projekt je nastavený na `PostgreSQL` přes `DATABASE_URL`.
 
-To learn more about Next.js, take a look at the following resources:
+- Pro lokální vývoj musí být databáze dostupná z vašeho počítače.
+- Pro Vercel nasaďte produkční `DATABASE_URL` do Project Environment Variables.
+- Po připojení nové databáze nezapomeňte aplikovat Prisma schema do cílového prostředí.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Důležité poznámky
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Autentizace běží přes `next-auth` s credentials providerem.
+- API vrací korektní `401`, `404` a `400` odpovědi pro běžné chybové stavy.
+- Galerie a smlouvy mají zatím UI vrstvu, ale jejich data nejsou napojená na samostatné Prisma modely.
