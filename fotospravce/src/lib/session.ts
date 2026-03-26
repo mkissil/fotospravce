@@ -1,12 +1,18 @@
 import { getServerSession } from 'next-auth';
 import { UnauthorizedError } from './api';
 import { authOptions } from './auth';
-import { prisma } from './db';
+import { normalizeEmail, prisma, withDbRetry } from './db';
 
 export async function getCurrentUser() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) return null;
-  return prisma.user.findUnique({ where: { email: session.user.email } });
+  const email = session.user.email;
+
+  return withDbRetry(() =>
+    prisma.user.findUnique({
+      where: { email: normalizeEmail(email) },
+    })
+  );
 }
 
 export async function requireUser() {
