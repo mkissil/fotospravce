@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  password     String
+  businessName String?
+  ico          String?
+  dic          String?
+  address      String?
+  phone        String?
+  vatPayer     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  clients  Client[]
+  jobs     Job[]
+  invoices Invoice[]
+}
+
+model Client {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  email       String?
+  phone       String?
+  companyName String?
+  ico         String?
+  notes       String?
+  source      String?
+  createdAt   DateTime @default(now())
+
+  jobs     Job[]
+  invoices Invoice[]
+
+  @@index([userId])
+}
+
+model Job {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  title       String
+  type        String    @default("jine")
+  status      String    @default("poptavka")
+  shootDate   DateTime?
+  location    String?
+  price       Float?
+  deposit     Float?
+  description String?
+  createdAt   DateTime  @default(now())
+
+  invoices Invoice[]
+
+  @@index([userId, status])
+}
+
+model Invoice {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clientId       String
+  client         Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  jobId          String?
+  job            Job?     @relation(fields: [jobId], references: [id])
+  invoiceNumber  String
+  issueDate      DateTime @default(now())
+  dueDate        DateTime
+  status         String   @default("draft")
+  items          String   @default("[]")
+  subtotal       Float
+  vatAmount      Float    @default(0)
+  total          Float
+  variableSymbol String?
+  createdAt      DateTime @default(now())
+
+  @@index([userId, status])
+}
